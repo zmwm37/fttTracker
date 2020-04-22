@@ -1,0 +1,12 @@
+name: foodTruckTuesday
+title: foodTruckTuesday
+username:
+account: zmwm37
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2164331
+bundleId: 3050028
+url: https://zmwm37.shinyapps.io/foodTruckTuesday/
+when: 1587563706.99501
+asMultiple: FALSE
+asStatic: FALSE

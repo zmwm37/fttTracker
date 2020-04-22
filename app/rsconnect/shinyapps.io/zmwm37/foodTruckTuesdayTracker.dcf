@@ -1,0 +1,12 @@
+name: foodTruckTuesdayTracker
+title: foodTruckTuesdayTracker
+username:
+account: zmwm37
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2164242
+bundleId: 3049805
+url: https://zmwm37.shinyapps.io/foodTruckTuesdayTracker/
+when: 1587560823.21212
+asMultiple: FALSE
+asStatic: FALSE

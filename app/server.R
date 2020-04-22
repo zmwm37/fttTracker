@@ -2,27 +2,34 @@ library(shiny)
 library(tidyverse)
 library(lubridate)
 library(ggplot2)
+library (readr)
 
-fftFull <- read.csv('../data/fftData.csv', stringsAsFactors = F)
+# load data
+urlfile="https://raw.githubusercontent.com/zmwm37/fttTracker/master/data/fttData.csv"
+
+fttFull<-read_csv(url(urlfile))
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
+
         
-        fft <- reactive({
+        # filter dataset based on 'Filters'
+        ftt <- reactive({
                 if(input$cat == 'All'){
-                        fftFull %>% filter(rating >= input$ratingFilter[1] &
+                        fttFull %>% filter(rating >= input$ratingFilter[1] &
                                                    rating <= input$ratingFilter[2]
                                            )
                 } else {
-                        fftFull %>% filter(category == input$cat,
+                        fttFull %>% filter(category == input$cat,
                                            rating >= input$ratingFilter[1] &
                                                    rating <= input$ratingFilter[2]
                                            )
                 }
         })
         
+        # Create summary cards
         output$numRes <- renderValueBox({
-                numRes<- length(unique(fft()$restaurant))
+                numRes<- length(unique(ftt()$restaurant))
                 
                 valueBox(
                         value = formatC(numRes, digits = 1, format = "f"),
@@ -32,7 +39,7 @@ shinyServer(function(input, output) {
         })
         
         output$avgRate <- renderValueBox({
-                avgRate<- mean(fft()$rating)
+                avgRate<- mean(ftt()$rating)
                 
                 valueBox(
                         value = formatC(avgRate, digits = 1, format = "f"),
@@ -42,7 +49,7 @@ shinyServer(function(input, output) {
         })
         
         output$numRate <- renderValueBox({
-                numRate<- length(fft()$rating)
+                numRate<- length(ftt()$rating)
                 
                 valueBox(
                         value = formatC(numRate, digits = 1, format = "f"),
@@ -51,20 +58,23 @@ shinyServer(function(input, output) {
                 )
                 })
         
+        # create map
         output$restaurantMap <- renderLeaflet({
-                fftSum<- fft() %>% 
+                # manipulate data
+                fttSum<- ftt() %>% 
                         group_by(restaurant,category, lat, long) %>%
                         summarize(rating.count = n(),
                                   mean.rating = mean(rating))
                 
-                fftSum %>%
+                # map
+                fttSum %>%
                         leaflet() %>%
                         addTiles() %>%
                         addCircles(weight = 1,radius = ~rating.count *100, 
-                                   popup =  paste(fftSum$restaurant,
-                                                 fftSum$category,
-                                                 paste("# Ratings:",fftSum$rating.count),
-                                                 paste("Avg. Rating:",fftSum$mean.rating),
+                                   popup =  paste(fttSum$restaurant,
+                                                 fttSum$category,
+                                                 paste("# Ratings:",fttSum$rating.count),
+                                                 paste("Avg. Rating:",fttSum$mean.rating),
                                                  sep = "<br/>")
                                    )
         })

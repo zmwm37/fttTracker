@@ -1,8 +1,14 @@
 library(shinythemes)
 library(leaflet)
-
 library(shinydashboard)
+
+# load data
+urlfile="https://raw.githubusercontent.com/zmwm37/fttTracker/master/data/fttData.csv"
+
+fttFull<-read_csv(url(urlfile))
+
 shinyUI(
+    
     dashboardPage(
         dashboardHeader(title = "Food Truck Tuesday Tracker"),
         dashboardSidebar(
@@ -28,7 +34,7 @@ shinyUI(
                     title = 'Filters', height = 300,
                     selectInput('cat',
                                 "Filter by Food Category", 
-                                c('All',unique(fft$category))
+                                c('All',unique(fttFull$category))
                                 ),
                     sliderInput('ratingFilter',label = 'Filter by Rating',
                                 min = 0, max = 10,value = c(0,10), step = 0.5)
