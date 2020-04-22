@@ -3,51 +3,70 @@ library(tidyverse)
 library(lubridate)
 library(ggplot2)
 
+fftFull <- read.csv('../data/fftData.csv', stringsAsFactors = F)
+
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
-        md_cities <- data.frame(name = c("Baltimore", "Frederick", "Rockville", "Gaithersburg", 
-                                         "Bowie", "Hagerstown", "Annapolis", "College Park", "Salisbury", "Laurel"),
-                                num.rate = c(619493, 66169, 62334, 61045, 55232,
-                                        39890, 38880, 30587, 30484, 25346),
-                                lat = c(39.2920592, 39.4143921, 39.0840, 39.1434, 39.0068, 39.6418, 38.9784, 38.9897, 38.3607, 39.0993),
-                                lng = c(-76.6077852, -77.4204875, -77.1528, -77.2014, -76.7791, -77.7200, -76.4922, -76.9378, -75.5994, -76.8483))
         
+        fft <- reactive({
+                if(input$cat == 'All'){
+                        fftFull %>% filter(rating >= input$ratingFilter[1] &
+                                                   rating <= input$ratingFilter[2]
+                                           )
+                } else {
+                        fftFull %>% filter(category == input$cat,
+                                           rating >= input$ratingFilter[1] &
+                                                   rating <= input$ratingFilter[2]
+                                           )
+                }
+        })
         
         output$numRes <- renderValueBox({
-                numRes<- 10
+                numRes<- length(unique(fft()$restaurant))
                 
                 valueBox(
                         value = formatC(numRes, digits = 1, format = "f"),
                         subtitle = "Number of Restaurants",
-                        icon = icon("area-chart")
+                        icon = icon('utensils')
                 )
         })
         
         output$avgRate <- renderValueBox({
-                avgRate<- 7.3
+                avgRate<- mean(fft()$rating)
                 
                 valueBox(
                         value = formatC(avgRate, digits = 1, format = "f"),
-                        subtitle = "Number of Restaurants",
-                        icon = icon("area-chart")
+                        subtitle = "Average Rating",
+                        icon = icon("star-half-alt")
                 )
         })
         
         output$numRate <- renderValueBox({
-                numRate<- 25
+                numRate<- length(fft()$rating)
                 
                 valueBox(
                         value = formatC(numRate, digits = 1, format = "f"),
                         subtitle = "Number of Ratings",
-                        icon = icon("area-chart")
+                        icon = icon("user-friends")
                 )
                 })
         
         output$restaurantMap <- renderLeaflet({
-                md_cities %>%
+                fftSum<- fft() %>% 
+                        group_by(restaurant,category, lat, long) %>%
+                        summarize(rating.count = n(),
+                                  mean.rating = mean(rating))
+                
+                fftSum %>%
                         leaflet() %>%
                         addTiles() %>%
-                        addCircles(weight = 1, radius = sqrt(md_cities$num.rate) * 30)
+                        addCircles(weight = 1,radius = ~rating.count *100, 
+                                   popup =  paste(fftSum$restaurant,
+                                                 fftSum$category,
+                                                 paste("# Ratings:",fftSum$rating.count),
+                                                 paste("Avg. Rating:",fftSum$mean.rating),
+                                                 sep = "<br/>")
+                                   )
         })
 
         

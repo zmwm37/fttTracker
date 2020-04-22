@@ -25,7 +25,13 @@ shinyUI(
                 
                 # filter selections
                 box(width = 4, status = 'info', solidHeader = T,
-                    title = 'Filters', height = 300
+                    title = 'Filters', height = 300,
+                    selectInput('cat',
+                                "Filter by Food Category", 
+                                c('All',unique(fft$category))
+                                ),
+                    sliderInput('ratingFilter',label = 'Filter by Rating',
+                                min = 0, max = 10,value = c(0,10), step = 0.5)
                     )
 
             )
