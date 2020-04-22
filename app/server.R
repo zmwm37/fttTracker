@@ -2,7 +2,7 @@ library(shiny)
 library(tidyverse)
 library(lubridate)
 library(ggplot2)
-library (readr)
+library(readr)
 
 # load data
 urlfile="https://raw.githubusercontent.com/zmwm37/fttTracker/master/data/fttData.csv"

@@ -1,6 +1,10 @@
 library(shinythemes)
 library(leaflet)
 library(shinydashboard)
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(readr)
 
 # load data
 urlfile="https://raw.githubusercontent.com/zmwm37/fttTracker/master/data/fttData.csv"
@@ -26,12 +30,12 @@ shinyUI(
             fluidRow(
                 box(width = 8, status = 'info',solidHeader = TRUE,
                     title = "Restaurants Reviewed",
-                    leafletOutput("restaurantMap", height = 300)
+                    leafletOutput("restaurantMap", height = 600)
                     ),
                 
                 # filter selections
                 box(width = 4, status = 'info', solidHeader = T,
-                    title = 'Filters', height = 300,
+                    title = 'Filters', height = 600,
                     selectInput('cat',
                                 "Filter by Food Category", 
                                 c('All',unique(fttFull$category))
