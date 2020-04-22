@@ -5,8 +5,8 @@ account: zmwm37
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2164331
-bundleId: 3050128
+bundleId: 3050243
 url: https://zmwm37.shinyapps.io/foodTruckTuesday/
-when: 1587564971.4909
+when: 1587566560.14132
 asMultiple: FALSE
 asStatic: FALSE
